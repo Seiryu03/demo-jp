@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>APrise チャットボット【デモ版】</title>
+    <style>
+        :root {
+            /* 白ベース + 赤黒アクセントのカラーパレット */
+            --primary-color: #D72B2B;
+            --secondary-color: #0A0A0A;
+            --accent-color: #FF4444;
+            --white: #FFFFFF;
+            --light-gray: #F7F7F7;
+            --medium-gray: #E5E5E5;
+            --dark-gray: #666666;
+            
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 8px rgba(0,0,0,0.08);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.1);
+            --shadow-xl: 0 20px 40px rgba(0,0,0,0.12);
+            --shadow-red: 0 4px 20px rgba(215,43,43,0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
+            line-height: 1.6;
+            color: var(--secondary-color);
+            background: linear-gradient(135deg, #FFFFFF 0%, #F5F5F5 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* 背景パターン */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 20% 80%, rgba(215,43,43,0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(215,43,43,0.03) 0%, transparent 50%);
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ヘッダー */
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            background: var(--white);
+            border-radius: 20px;
+            margin: 20px;
+            box-shadow: var(--shadow-xl);
+            border: 1px solid var(--medium-gray);
+            animation: fadeInDown 0.8s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ロゴ */
+        .logo {
+            font-size: 3em;
+            font-weight: 800;
+            color: var(--secondary-color);
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .logo::after {
+            content: 'Demo';
+            position: absolute;
+            top: -10px;
+            right: -60px;
+            background: var(--primary-color);
+            color: white;
+            font-size: 0.25em;
+            padding: 2px 6px;
+            border-radius: 15px;
+            font-weight: 500;
+            opacity: 0.8;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        h1 {
+            color: var(--secondary-color);
+            font-size: 2em;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.1em;
+            color: var(--dark-gray);
+            margin-bottom: 20px;
+            font-weight: 300;
+        }
+
+        .demo-notice {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-size: 0.95em;
+            font-weight: 600;
+            box-shadow: var(--shadow-red);
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        /* セクションカード */
+        .sections-wrapper {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 40px 20px;
+        }
+
+        .section {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--medium-gray);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: fadeInUp 0.8s ease-out backwards;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--primary-color);
+        }
+
+        .section:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-xl), var(--shadow-red);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section h2 {
+            color: var(--primary-color);
+            margin-bottom: 25px;
+            font-size: 1.6em;
+            font-weight: 700;
+        }
+
+        .section ul {
+            list-style: none;
+        }
+
+        .section li {
+            padding: 12px 0;
+            border-bottom: 1px solid var(--medium-gray);
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+            position: relative;
+            padding-left: 35px;
+            color: var(--secondary-color);
+        }
+
+        .section li:hover {
+            padding-left: 40px;
+            color: var(--primary-color);
+        }
+
+        .section li:before {
+            content: '';
+            position: absolute;
+            left: 0;
+            width: 24px;
+            height: 24px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .section li:after {
+            content: '✓';
+            position: absolute;
+            left: 6px;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .section li:last-child {
+            border-bottom: none;
+        }
+
+        /* チャットランチャー */
+        .chat-launcher {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: var(--shadow-xl), var(--shadow-red);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: bounceIn 0.8s ease-out, floatButton 3s ease-in-out infinite;
+        }
+
+        @keyframes bounceIn {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes floatButton {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .chat-launcher:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow-xl), 0 0 30px rgba(215,43,43,0.4);
+        }
+
+        .chat-launcher svg {
+            width: 30px;
+            height: 30px;
+            fill: white;
+        }
+
+
+        .chat-tooltip {
+            position: absolute;
+            bottom: 85px;
+            right: 0;
+            background: var(--secondary-color);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 10px;
+            font-size: 13px;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .chat-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            right: 25px;
+            border: 6px solid transparent;
+            border-top-color: var(--secondary-color);
+        }
+
+        .chat-launcher:hover .chat-tooltip {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(-5px);
+        }
+
+        /* チャットウィンドウ */
+        .chat-window {
+            position: fixed;
+            bottom: 110px;
+            right: 30px;
+            width: 420px;
+            height: 650px;
+            background: var(--white);
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transform: scale(0.9) translateY(20px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+            border: 2px solid var(--medium-gray);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-window.show {
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1) translateY(0);
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1.1em;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .chat-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.2);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            margin-top: 5px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #FFF;
+            border-radius: 50%;
+            animation: statusBlink 2s infinite;
+        }
+
+        @keyframes statusBlink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .chat-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .chat-close:hover {
+            background: rgba(255,255,255,0.3);
+            transform: rotate(90deg);
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: var(--light-gray);
+            min-height: 0;
+        }
+
+        .chat-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 10px;
+        }
+
+        .message {
+            margin-bottom: 20px;
+            animation: messageSlide 0.3s ease-out;
+        }
+
+        @keyframes messageSlide {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.bot {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .bot-avatar {
+            width: 35px;
+            height: 35px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+
+        .message-content {
+            background: white;
+            padding: 12px 18px;
+            border-radius: 18px 18px 18px 5px;
+            max-width: 80%;
+            line-height: 1.5;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--medium-gray);
+        }
+
+        .message.user .message-content {
+            background: var(--primary-color);
+            color: white;
+            border-radius: 18px 18px 5px 18px;
+            margin-left: auto;
+            box-shadow: var(--shadow-md);
+            border: none;
+        }
+
+        .demo-warning {
+            background: #FFF3CD;
+            border: 1px solid #FFC107;
+            color: #856404;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.85em;
+            margin-top: 10px;
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 15px;
+            margin: 10px 0;
+        }
+
+        .typing-indicator.show {
+            display: flex;
+            gap: 5px;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            animation: typingBounce 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typingBounce {
+            0%, 60%, 100% {
+                transform: translateY(0);
+            }
+            30% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .quick-questions {
+            padding: 15px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            border-top: 1px solid var(--medium-gray);
+            background: var(--light-gray);
+            flex-shrink: 0;
+        }
+
+        .quick-question {
+            padding: 8px 16px;
+            background: white;
+            border: 2px solid var(--primary-color);
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s ease;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .quick-question:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .chat-input-area {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid var(--medium-gray);
+            flex-shrink: 0;
+        }
+
+        .input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--light-gray);
+            border-radius: 25px;
+            padding: 5px;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .input-wrapper:focus-within {
+            background: white;
+            border-color: var(--primary-color);
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 10px 15px;
+            border: none;
+            background: transparent;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .send-button {
+            width: 40px;
+            height: 40px;
+            background: var(--primary-color);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .send-button:hover {
+            transform: scale(1.1);
+            background: var(--accent-color);
+        }
+
+        .send-button svg {
+            width: 20px;
+            height: 20px;
+            fill: white;
+        }
+
+        .contact-info {
+            margin-top: 10px;
+            font-size: 11px;
+            color: var(--dark-gray);
+            text-align: center;
+        }
+
+        .contact-info a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        /* フッター */
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 40px;
+        }
+
+        .footer-demo-notice {
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: var(--shadow-xl);
+            max-width: 600px;
+            margin: 0 auto;
+            border: 2px solid var(--primary-color);
+            animation: fadeInUp 0.8s ease-out 0.4s backwards;
+        }
+
+        .footer-demo-notice strong {
+            color: var(--primary-color);
+            font-size: 1.2em;
+        }
+
+        .footer-demo-notice .demo-badge {
+            display: inline-block;
+            background: var(--primary-color);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            margin-left: 10px;
+        }
+
+        /* レスポンシブ */
+        @media (max-width: 768px) {
+            .sections-wrapper {
+                grid-template-columns: 1fr;
+            }
+            
+            .chat-window {
+                width: calc(100vw - 40px);
+                height: calc(100vh - 140px);
+                right: 20px;
+                bottom: 100px;
+            }
+            
+            .logo {
+                font-size: 2.5em;
+            }
+
+            .logo::after {
+                right: -50px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">APrise</div>
+            <h1>AIチャットボット デモ</h1>
+            <p class="subtitle">24時間365日、よくある質問に即座に自動対応</p>
+            <div class="demo-notice">✨ 実際の動作をご体験ください</div>
+        </div>
+    </header>
+
+    <div class="sections-wrapper">
+        <section class="section">
+            <h2>📌 デモ版で体験できること</h2>
+            <ul>
+                <li>チャットボットのUI/UX体験</li>
+                <li>応答速度のシミュレーション</li>
+                <li>デザインカスタマイズの確認</li>
+                <li>基本的な対話フロー</li>
+                <li>レスポンシブデザイン</li>
+            </ul>
+        </section>
+
+        <section class="section">
+            <h2>🔒 デモ版の制限事項</h2>
+            <ul>
+                <li>実際の料金情報は非公開</li>
+                <li>カスタム応答は未設定</li>
+                <li>データベース連携なし</li>
+                <li>個人情報の取り扱いなし</li>
+                <li>すべての応答はサンプル</li>
+            </ul>
+        </section>
+    </div>
+
+    <footer>
+        <div class="footer-demo-notice">
+            <strong>🎆 導入企業様の声</strong>
+            <span class="demo-badge">VOICE</span><br><br>
+            「問い合わせ対応コストが70%削減し、スタッフが本来の業務に集中できました」<br>
+            「深夜の注文が増え、売上が30%以上伸びました」<br>
+            「外国人観光客からの問い合わせにも対応できるようになりました」
+        </div>
+    </footer>
+
+    <!-- チャットボット -->
+    <div class="chat-launcher" id="chatLauncher">
+        <svg viewBox="0 0 24 24">
+            <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
+        </svg>
+        <div class="chat-tooltip">デモ版を体験 →</div>
+    </div>
+
+    <div class="chat-window" id="chatWindow">
+        <div class="chat-header">
+            <div>APrise カスタマーサポート</div>
+            <div class="chat-status">
+                <span class="status-dot"></span>
+                <span>オンライン・自動応答中</span>
+            </div>
+            <button class="chat-close" id="chatClose">×</button>
+        </div>
+        
+        <div class="chat-messages" id="chatMessages">
+            <div class="message bot">
+                <div class="bot-avatar">A</div>
+                <div class="message-content">
+                    こんにちは！APrise オンラインショップへようこそ 🛍️<br><br>
+                    お困りのことがございましたら、お気軽にお尋ねください。<br>
+                    よくあるご質問は以下のボタンからもお選びいただけます：
+                </div>
+            </div>
+            <div class="typing-indicator" id="typingIndicator">
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+            </div>
+        </div>
+        
+        <div class="quick-questions" id="quickQuestions">
+            <button class="quick-question" data-question="送料はいくらですか？">送料について</button>
+            <button class="quick-question" data-question="返品・交換はできますか？">返品・交換</button>
+            <button class="quick-question" data-question="在庫はありますか？">在庫確認</button>
+            <button class="quick-question" data-question="いつ届きますか？">配送日数</button>
+            <button class="quick-question" data-question="支払い方法は？">お支払い</button>
+        </div>
+        
+        <div class="chat-input-area">
+            <div class="input-wrapper">
+                <input type="text" class="chat-input" id="chatInput" placeholder="メッセージを入力...">
+                <button class="send-button" id="sendButton">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="contact-info">
+                実際の導入については <a href="mailto:seiryu@aprise.co.uk">seiryu@aprise.co.uk</a> まで
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // チャットボット機能（デモ版）
+        const chatLauncher = document.getElementById('chatLauncher');
+        const chatWindow = document.getElementById('chatWindow');
+        const chatClose = document.getElementById('chatClose');
+        const chatInput = document.getElementById('chatInput');
+        const chatMessages = document.getElementById('chatMessages');
+        const quickQuestions = document.getElementById('quickQuestions');
+        const sendButton = document.getElementById('sendButton');
+        const typingIndicator = document.getElementById('typingIndicator');
+
+        // チャット開閉
+        chatLauncher.addEventListener('click', () => {
+            chatWindow.classList.add('show');
+            setTimeout(() => {
+                chatInput.focus();
+            }, 300);
+        });
+
+        chatClose.addEventListener('click', () => {
+            chatWindow.classList.remove('show');
+        });
+
+        // 外側クリックで閉じる
+        document.addEventListener('click', (e) => {
+            if (!chatWindow.contains(e.target) && !chatLauncher.contains(e.target)) {
+                chatWindow.classList.remove('show');
+            }
+        });
+
+        // ESCキーで閉じる
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                chatWindow.classList.remove('show');
+            }
+        });
+
+        // タイピングインジケーター
+        function showTyping() {
+            typingIndicator.classList.add('show');
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function hideTyping() {
+            typingIndicator.classList.remove('show');
+        }
+
+        // メッセージ追加
+        function addMessage(text, isUser = false) {
+            hideTyping();
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
+            
+            if (!isUser) {
+                messageDiv.innerHTML = `
+                    <div class="bot-avatar">A</div>
+                    <div class="message-content">${text}</div>
+                `;
+            } else {
+                messageDiv.innerHTML = `<div class="message-content">${text}</div>`;
+            }
+            
+            chatMessages.insertBefore(messageDiv, typingIndicator);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // リアルな応答例
+        function getBotResponse(question) {
+            const responses = {
+                '送料はいくらですか？': `
+                    <strong>送料について</strong><br><br>
+                    全国一律で以下の送料となります：<br>
+                    • 通常配送：600円<br>
+                    • お急ぎ便：1,000円<br>
+                    • 5,000円以上のご購入で送料無料<br><br>
+                    
+                    離島・一部地域は追加料金が発生する場合がございます。<br>
+                    詳細は配送ページをご確認ください。
+                `,
+                '返品・交換はできますか？': `
+                    <strong>返品・交換について</strong><br><br>
+                    商品到着後7日以内であれば承っております。<br><br>
+                    
+                    【返品可能な場合】<br>
+                    • 商品に不具合がある<br>
+                    • ご注文と異なる商品が届いた<br>
+                    • 未使用・未開封の商品<br><br>
+                    
+                    【返品できない場合】<br>
+                    • お客様都合による返品（サイズ違い等）<br>
+                    • 一度ご使用になった商品<br><br>
+                    
+                    返品をご希望の場合は、カスタマーサポートまでご連絡ください。
+                `,
+                '在庫はありますか？': `
+                    <strong>在庫確認</strong><br><br>
+                    申し訳ございません。在庫状況をお調べするには、<br>
+                    具体的な商品名または商品番号をお教えください。<br><br>
+                    
+                    商品ページでは以下のように表示されます：<br>
+                    • 🟢 在庫あり：即日発送可能<br>
+                    • 🟡 残りわずか：1-3個<br>
+                    • 🔴 在庫なし：入荷待ち<br><br>
+                    
+                    人気商品は在庫切れになりやすいため、<br>
+                    お早めのご注文をおすすめします。
+                `,
+                'いつ届きますか？': `
+                    <strong>お届け日数について</strong><br><br>
+                    ご注文確定後の配送スケジュール：<br><br>
+                    
+                    【通常配送】<br>
+                    • 本州：2-3営業日<br>
+                    • 北海道・九州：3-4営業日<br>
+                    • 沖縄・離島：4-7営業日<br><br>
+                    
+                    【お急ぎ便】<br>
+                    • 最短翌日お届け（一部地域除く）<br><br>
+                    
+                    ※土日祝日は発送業務を行っておりません<br>
+                    ※在庫状況により変動する場合があります
+                `,
+                '支払い方法は？': `
+                    <strong>お支払い方法</strong><br><br>
+                    以下のお支払い方法をご利用いただけます：<br><br>
+                    
+                    💳 <strong>クレジットカード</strong><br>
+                    VISA / Mastercard / JCB / AMEX / Diners<br><br>
+                    
+                    📱 <strong>電子マネー</strong><br>
+                    PayPay / LINE Pay / 楽天Pay / メルペイ<br><br>
+                    
+                    🏦 <strong>その他</strong><br>
+                    • コンビニ後払い（手数料200円）<br>
+                    • 銀行振込（前払い）<br>
+                    • 代金引換（手数料330円）<br><br>
+                    
+                    分割払いも可能です（クレジットカードのみ）
+                `
+            };
+
+            // デフォルト応答（カスタム質問用）
+            return responses[question] || `
+                ご質問ありがとうございます。<br><br>
+                「${question}」について確認いたします。<br><br>
+                
+                より詳しい情報が必要な場合は、<br>
+                以下の方法でもお問い合わせいただけます：<br>
+                • メール：seiryu@aprise.co.uk<br>
+                • 電話：営業時間内にお電話ください<br><br>
+                
+                他にもご不明な点がございましたら、<br>
+                お気軽にお尋ねください。
+                
+                <small style="color: #999; display: block; margin-top: 15px; font-size: 11px;">
+                ※これはデモ版のサンプル応答です
+                </small>
+            `;
+        }
+
+        // クイック質問ボタン
+        quickQuestions.addEventListener('click', (e) => {
+            if (e.target.classList.contains('quick-question')) {
+                const question = e.target.dataset.question;
+                addMessage(question, true);
+                
+                showTyping();
+                setTimeout(() => {
+                    addMessage(getBotResponse(question));
+                }, 1500);
+            }
+        });
+
+        // メッセージ送信
+        function sendMessage() {
+            const message = chatInput.value.trim();
+            if (message) {
+                addMessage(message, true);
+                chatInput.value = '';
+                
+                showTyping();
+                setTimeout(() => {
+                    addMessage(getBotResponse(message));
+                }, 1500);
+            }
+        }
+
+        // 入力イベント
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        sendButton.addEventListener('click', sendMessage);
+
+        // アクセシビリティ
+        chatLauncher.setAttribute('role', 'button');
+        chatLauncher.setAttribute('aria-label', 'デモ版チャットを開く');
+        chatLauncher.setAttribute('tabindex', '0');
+        
+        chatLauncher.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                chatWindow.classList.add('show');
+            }
+        });
+    </script>
+</body>
+</html>
