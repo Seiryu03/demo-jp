@@ -88,60 +88,7 @@
             -moz-osx-font-smoothing: grayscale;
         }
 
-        /* カスタムカーソルはデスクトップのみ */
-        @media (hover: hover) and (pointer: fine) {
-            body {
-                cursor: none;
-            }
-        }
 
-        /* Ultra Custom Cursor */
-        .cursor-wrapper {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 10000;
-        }
-
-        .cursor-main {
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            border: 2px solid var(--primary-red);
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            transition: all 0.1s ease-out;
-            mix-blend-mode: difference;
-        }
-
-        .cursor-trail {
-            position: absolute;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: radial-gradient(circle, var(--primary-light), transparent);
-            transform: translate(-50%, -50%);
-            opacity: 0.3;
-            transition: all 0.3s ease-out;
-        }
-
-        .cursor-text {
-            position: absolute;
-            transform: translate(-50%, -50%);
-            color: var(--primary-red);
-            font-size: 0.8rem;
-            font-weight: 600;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            pointer-events: none;
-        }
-
-        .cursor-text.visible {
-            opacity: 1;
-        }
 
         /* Loading Screen Ultimate */
         .loading-screen {
@@ -1001,6 +948,25 @@
             }
         }
 
+        /* Responsive Grid Layout */
+        @media (max-width: 1024px) {
+            .three-card-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 2rem !important;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .three-card-grid {
+                grid-template-columns: 1fr !important;
+                gap: 2rem !important;
+            }
+            
+            .tilt-card {
+                padding: 2rem 1.5rem !important;
+            }
+        }
+
         /* Print Styles */
         @media print {
             .header,
@@ -1047,38 +1013,7 @@
     </style>
 </head>
 <body>
-    <!-- Loading Screen -->
-    <div class="loading-screen">
-        <div class="loading-logo">
-            <span style="--i: 0">A</span>
-            <span style="--i: 1">P</span>
-            <span style="--i: 2">r</span>
-            <span style="--i: 3">i</span>
-            <span style="--i: 4">s</span>
-            <span style="--i: 5">e</span>
-        </div>
-        <div class="loading-progress">
-            <div class="loading-progress-bar"></div>
-        </div>
-    </div>
 
-    <!-- Custom Cursor -->
-    <div class="cursor-wrapper">
-        <div class="cursor-main"></div>
-        <div class="cursor-trail"></div>
-        <div class="cursor-text"></div>
-    </div>
-
-    <!-- Three.js 3D Background -->
-    <canvas id="three-canvas"></canvas>
-
-    <!-- Aurora Background -->
-    <div class="aurora-bg">
-        <div class="aurora-layer"></div>
-        <div class="aurora-layer"></div>
-        <div class="aurora-layer"></div>
-        <div class="aurora-layer"></div>
-    </div>
 
     <!-- Header -->
     <header class="header">
@@ -1122,7 +1057,7 @@
             </div>
             
             <!-- 返金保証バッジを最上部に配置 -->
-            <div style="background: linear-gradient(135deg, var(--primary-red), var(--primary-light)); color: white; padding: 0.8rem 2rem; border-radius: 50px; display: inline-block; margin-bottom: 2rem; font-weight: 700; font-size: 1.1rem; box-shadow: 0 4px 15px rgba(183, 28, 28, 0.3);">
+            <div style="background: #B71C1C; color: white; padding: 0.8rem 2rem; border-radius: 25px; display: inline-block; margin-bottom: 2rem; font-weight: 600;">
                 🛡️ 3日以内全額返金保証
             </div>
 
@@ -1131,31 +1066,33 @@
                 <span style="font-size: 0.7em; opacity: 0.8;">安心して試せる</span>AIチャットボット
             </h1>
             
-            <p style="font-size: 1.3rem; margin: 2rem 0; opacity: 0.9; line-height: 1.6;">
-                <strong>超シンプルな流れ</strong>で始められます：<br>
-            </p>
-
             <!-- 簡単な流れを表示 -->
-            <div style="background: rgba(255, 255, 255, 0.95); padding: 2rem; border-radius: 20px; margin: 2rem 0; box-shadow: 0 4px 20px rgba(0,0,0,0.1); text-align: left; max-width: 600px;">
-                <div style="display: flex; align-items: center; margin-bottom: 1rem; color: var(--primary-red);">
-                    <div style="background: var(--primary-red); color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; margin-right: 15px;">1</div>
-                    <div><strong>49,000円お支払い</strong> → あなた専用ボット作成開始</div>
-                </div>
-                <div style="display: flex; align-items: center; margin-bottom: 1rem; color: var(--primary-red);">
-                    <div style="background: var(--primary-red); color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; margin-right: 15px;">2</div>
-                    <div><strong>3日以内に完成</strong> → 1行のコードをお送りします</div>
-                </div>
-                <div style="display: flex; align-items: center; margin-bottom: 1rem; color: var(--primary-red);">
-                    <div style="background: var(--primary-red); color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; margin-right: 15px;">3</div>
-                    <div><strong>コードを貼るだけ</strong> → すぐに動作開始</div>
-                </div>
-                <div style="display: flex; align-items: center; margin-bottom: 1rem; color: var(--primary-red);">
-                    <div style="background: var(--primary-red); color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; margin-right: 15px;">4</div>
-                    <div><strong>3日間お試し</strong> → 気に入らなければ全額返金</div>
-                </div>
-                <div style="display: flex; align-items: center; color: var(--primary-red);">
-                    <div style="background: var(--primary-red); color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; margin-right: 15px;">5</div>
-                    <div><strong>2週間無料</strong> → その後：月額20,000円 or 本格版</div>
+            <div style="background: #fff; padding: 2.5rem; border-radius: 10px; margin: 3rem auto; box-shadow: 0 2px 8px rgba(0,0,0,0.1); text-align: center; max-width: 800px; border: 1px solid #e5e5e5;">
+                <h3 style="color: #B71C1C; font-size: 1.8rem; font-weight: 700; margin-bottom: 2rem; text-align: center;">
+                    超シンプルな流れ
+                </h3>
+                
+                <div style="text-align: left;">
+                    <div style="display: flex; align-items: center; margin-bottom: 1.5rem; color: var(--primary-red);">
+                        <div style="background: #B71C1C; color: white; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; margin-right: 15px;">1</div>
+                        <div style="color: #333;"><strong>49,000円お支払い</strong> → あなた専用ボット作成開始</div>
+                    </div>
+                    <div style="display: flex; align-items: center; margin-bottom: 1.5rem;">
+                        <div style="background: #B71C1C; color: white; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; margin-right: 15px;">2</div>
+                        <div style="color: #333;"><strong>3日以内に完成</strong> → 1行のコードをお送りします</div>
+                    </div>
+                    <div style="display: flex; align-items: center; margin-bottom: 1.5rem;">
+                        <div style="background: #B71C1C; color: white; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; margin-right: 15px;">3</div>
+                        <div style="color: #333;"><strong>コードを貼るだけ</strong> → すぐに動作開始</div>
+                    </div>
+                    <div style="display: flex; align-items: center; margin-bottom: 1.5rem;">
+                        <div style="background: #B71C1C; color: white; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; margin-right: 15px;">4</div>
+                        <div style="color: #333;"><strong>3日間お試し</strong> → 気に入らなければ全額返金</div>
+                    </div>
+                    <div style="display: flex; align-items: center;">
+                        <div style="background: #B71C1C; color: white; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; margin-right: 15px;">5</div>
+                        <div style="color: #333;"><strong>2週間無料</strong> → その後：月額20,000円 or 本格版</div>
+                    </div>
                 </div>
             </div>
 
@@ -1188,7 +1125,7 @@
             </h2>
             <p style="text-align: center; font-size: 1.2rem; color: var(--text-gray); margin-bottom: 4rem;">多くの企業様が抱える3つの課題</p>
             
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 3rem; max-width: 900px; margin: 0 auto;">
+            <div class="three-card-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 3rem; max-width: 1000px; margin: 0 auto;">
                 <div class="tilt-card" style="text-align: center; padding: 3rem 2rem;">
                     <div style="font-size: 4rem; margin-bottom: 1.5rem;">🌙</div>
                     <h3 style="font-size: 1.8rem; font-weight: 800; margin-bottom: 1.5rem; color: var(--primary-red);">24時間対応できない</h3>
@@ -1254,9 +1191,24 @@
                     <div class="tilt-card" style="background: linear-gradient(135deg, #FFF5F5, #FFE8E8); border: 3px solid var(--primary-red); position: relative;">
                         <div style="background: var(--primary-red); color: white; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem; font-weight: 700; position: absolute; top: -15px; left: 50%; transform: translateX(-50%);">STEP 2</div>
                         <h3 style="font-size: 1.5rem; font-weight: 800; margin: 1rem 0; color: var(--primary-red);">本格導入プラン</h3>
-                        <div style="font-size: 2.5rem; font-weight: 900; margin: 1rem 0; color: var(--primary-red);">¥150,000</div>
                         <p style="color: var(--text-gray); margin-bottom: 1.5rem; line-height: 1.6;">完全カスタマイズ＋高度な分析</p>
-                        <ul style="text-align: left; margin: 1rem 0; color: var(--text-gray);">
+                        
+                        <!-- 料金を2パターンで表示 -->
+                        <div style="display: flex; gap: 1rem; margin: 1.5rem 0; justify-content: center; max-width: 500px; margin-left: auto; margin-right: auto;">
+                            <div style="flex: 1; background: rgba(183, 28, 28, 0.1); border-radius: 15px; padding: 1.5rem; border: 2px solid var(--primary-red); text-align: center;">
+                                <div style="color: var(--primary-red); font-weight: 700; margin-bottom: 0.5rem; font-size: 0.9rem;">🎯 トライアル参加者</div>
+                                <div style="font-size: 2rem; font-weight: 900; color: var(--primary-red);">¥200,000</div>
+                                <div style="font-size: 0.8rem; color: var(--text-gray); margin-top: 0.5rem;">追加料金のみ</div>
+                            </div>
+                            
+                            <div style="flex: 1; background: rgba(255, 255, 255, 0.8); border-radius: 15px; padding: 1.5rem; border: 2px solid #ddd; text-align: center;">
+                                <div style="color: var(--text-gray); font-weight: 700; margin-bottom: 0.5rem; font-size: 0.9rem;">🆕 新規導入の方</div>
+                                <div style="font-size: 2rem; font-weight: 900; color: var(--text-gray);">¥249,000</div>
+                                <div style="font-size: 0.8rem; color: var(--text-gray); margin-top: 0.5rem;">一括料金</div>
+                            </div>
+                        </div>
+                        
+                        <ul style="text-align: left; margin: 1.5rem 0; color: var(--text-gray);">
                             <li style="margin-bottom: 0.5rem;">🚀 完全カスタマイズ対応</li>
                             <li style="margin-bottom: 0.5rem;">📊 詳細会話データ分析</li>
                             <li style="margin-bottom: 0.5rem;">🛍️ 商品レコメンド機能</li>
@@ -1335,7 +1287,7 @@
             </h2>
             <p style="text-align: center; font-size: 1.2rem; color: var(--text-gray); margin-bottom: 4rem;">シンプルに、3つの機能で問題解決</p>
             
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 4rem; max-width: 900px; margin: 0 auto;">
+            <div class="three-card-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 4rem; max-width: 1200px; margin: 0 auto;">
                 <div class="tilt-card" style="text-align: center; padding: 3rem 2rem;">
                     <div style="width: 120px; height: 120px; margin: 0 auto 2rem; background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3.5rem; color: var(--white);">
                         💬
@@ -1391,7 +1343,7 @@
                 お客様との会話から、ビジネス改善のヒントを自動で抽出します
             </p>
             
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 3rem; max-width: 900px; margin: 0 auto;">
+            <div class="three-card-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 3rem; max-width: 1000px; margin: 0 auto;">
                 <div style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border-radius: 20px; padding: 2rem; text-align: center;">
                     <div style="font-size: 4rem; margin-bottom: 1.5rem;">📊</div>
                     <h3 style="font-size: 1.8rem; font-weight: 800; margin-bottom: 1.5rem; color: var(--white);">質問傾向の把握</h3>
